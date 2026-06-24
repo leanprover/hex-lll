@@ -1,0 +1,62 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: false
+      - name: Build library
+        run: lake build
+      - name: Build provider probe
+        run: lake build hexlll_provider_probe
+      - name: Provider probe (absent + LD_PRELOAD present)
+        run: |
+          .lake/build/bin/hexlll_provider_probe absent
+          cc -shared -fPIC scripts/ci/hexlll_probe_provider.c -o .lake/build/hexlll_probe_provider.so
+          LD_PRELOAD="$PWD/.lake/build/hexlll_probe_provider.so" \
+            .lake/build/bin/hexlll_provider_probe present
+      - name: Build + smoke conformance
+        run: |
+          cd conformance
+          lake build
+          lake exe hexlll_emit_fixtures | head -1
+      - name: Build + verify bench
+        run: |
+          cd bench
+          lake build
+          lake exe hexlll_bench verify
+      - name: Assert Mathlib-free
+        run: |
+          if find . -type d -name mathlib | grep -q .; then
+            echo "ERROR: a package pulled in Mathlib"; exit 1; fi
+          if grep -rqE '^import Mathlib' HexLLL conformance bench 2>/dev/null; then
+            echo "ERROR: a source file imports Mathlib"; exit 1; fi
+          echo "Mathlib-free OK"
+  # macOS job exists solely for the FFI dyld symbol-resolution cross-check
+  # (the LLL provider probe); per SPEC/CI.md this is the one justified second runner.
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          build: false
+      - name: Build provider probe
+        run: lake build hexlll_provider_probe
+      - name: Provider probe (absent + DYLD_INSERT present)
+        run: |
+          .lake/build/bin/hexlll_provider_probe absent
+          cc -shared -fPIC scripts/ci/hexlll_probe_provider.c -o .lake/build/hexlll_probe_provider.dylib
+          DYLD_INSERT_LIBRARIES="$PWD/.lake/build/hexlll_probe_provider.dylib" \
+            .lake/build/bin/hexlll_provider_probe present
