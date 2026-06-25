@@ -2143,6 +2143,15 @@ def lllSteered (b : Matrix Int n m) (δ : Rat)
   else
     lllNative b δ hδ hδ' hn
 
+/-! ## External LLL provider
+
+Optional runtime hook for an external reducer (e.g. fpLLL) loaded through the
+C FFI shim in `HexLLL/ffi/`. `providerAvailable` reports whether a provider is
+registered (driven by the `HEX_FPLLL_FFI_LIB` environment variable); when none
+is present, or a returned candidate fails validation, callers fall back to the
+verified native reducer `lllNative`. The provider is acceleration only and is
+never part of the trusted path — every candidate it returns is checked before
+use. See `SPEC/hex-lll.md` for the dispatch and certification details. -/
 namespace LLLProvider
 
 @[extern "lean_hexlll_provider_available"]
