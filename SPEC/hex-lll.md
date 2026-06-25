@@ -346,7 +346,7 @@ per lifted local factor).
 Phase 4 benchmarks must register `lll`/`lll.firstShortVector` as the
 recombination hot path inherited from `hex-berlekamp-zassenhaus`,
 and must exercise the algorithm on three input families. These are
-cross-referenced as `phase4.input_families` in [`libraries.yml`](../../libraries.yml):
+cross-referenced as `phase4.input_families` in [`libraries.yml`](https://github.com/kim-em/hex-dev/blob/main/libraries.yml):
 
 - **`bz-recombination`** — the Berlekamp–Zassenhaus recombination
   basis at the documented `(p, k, factors)` configurations.
@@ -370,7 +370,7 @@ bench module as a fixed fixture so the swap-firing property is
 verifiable from the SPEC alone.
 
 **Best-case inputs are not sole Phase-4 evidence.** Per
-[SPEC/benchmarking.md §Anti-patterns](../benchmarking.md#anti-patterns),
+[SPEC/benchmarking.md §Anti-patterns](https://github.com/kim-em/hex-dev/blob/main/SPEC/benchmarking.md#anti-patterns),
 inputs the algorithm walks past in its happy path may appear as
 supplemental smoke or fixed cases, but never as the sole end-to-end
 evidence. Exemplar to avoid: the identity basis. The LLL outer loop
@@ -383,7 +383,7 @@ loop's traversal cost and nothing about size reduction or swaps.
 
 Three external comparators are required for HexLLL Phase 4. The
 classification below is mirrored as structured metadata in
-[`libraries.yml`](../../libraries.yml) under `HexLLL.phase4.comparators`:
+[`libraries.yml`](https://github.com/kim-em/hex-dev/blob/main/libraries.yml) under `HexLLL.phase4.comparators`:
 
 - **`fpLLL via fplll-ffi`** — `informational`. fpLLL implements
   floating-point Gram–Schmidt variants (Nguyen–Stehlé) which
@@ -391,10 +391,10 @@ classification below is mirrored as structured metadata in
   implementation pays. The constant-factor gap is structural, not
   algorithmic, so the ratio is recorded for orientation but does
   not gate Phase 4. See
-  [SPEC/benchmarking.md §Comparator classification](../benchmarking.md#comparator-classification-gating-vs-informational).
+  [SPEC/benchmarking.md §Comparator classification](https://github.com/kim-em/hex-dev/blob/main/SPEC/benchmarking.md#comparator-classification-gating-vs-informational).
   fpLLL is measured through the **FFI shim** `fplll-ffi` (the preferred
   comparator pattern per
-  [SPEC/benchmarking.md §External comparators](../benchmarking.md#external-comparators)),
+  [SPEC/benchmarking.md §External comparators](https://github.com/kim-em/hex-dev/blob/main/SPEC/benchmarking.md#external-comparators)),
   an in-process C++ call into `libfplll` — not a Python (`fpylll`) subprocess,
   whose interpreter and IPC overhead the runtime path never pays. This is the
   same `fplll-ffi` the certified external-dispatch path resolves at runtime, so
@@ -434,7 +434,7 @@ classification below is mirrored as structured metadata in
   verified Isabelle LLL** on shared canonical inputs, evaluated at
   the largest eligible rung of each `phase4.input_families` parameter
   ladder per
-  [SPEC/benchmarking.md §Headline reports — Comparator ratios](../benchmarking.md#headline-reports).
+  [SPEC/benchmarking.md §Headline reports — Comparator ratios](https://github.com/kim-em/hex-dev/blob/main/SPEC/benchmarking.md#headline-reports).
   "Eligible" is the rung range between the comparator-overhead-
   dominance floor and the per-call wallclock ceiling (10 s hard,
   1 s soft) defined there. The headline report at
@@ -444,7 +444,7 @@ classification below is mirrored as structured metadata in
   An adverse trend (Lean steadily losing ground as the parameter
   grows) is itself an audit-found Concern per
   [PLAN/Conventions.md §Bench-found, conformance-found, and
-  audit-found issues](../../PLAN/Conventions.md#bench-found-conformance-found-and-audit-found-issues),
+  audit-found issues](https://github.com/kim-em/hex-dev/blob/main/PLAN/Conventions.md#bench-found-conformance-found-and-audit-found-issues),
   even when the highest-rung verdict happens to pass.
 
   **Comparator-call protocol.** `fpLLL` is an in-process FFI call through
@@ -456,7 +456,7 @@ classification below is mirrored as structured metadata in
   resolves the provider and the fpLLL comparator calls it directly. The two
   Isabelle comparators (`verified Isabelle LLL` and `verified Isabelle certified-LLL`)
   are wired as persistent subprocesses per
-  [SPEC/benchmarking.md §External comparators — Process call](../benchmarking.md#external-comparators):
+  [SPEC/benchmarking.md §External comparators — Process call](https://github.com/kim-em/hex-dev/blob/main/SPEC/benchmarking.md#external-comparators):
   one subprocess per comparator per `lake exe hexlll_bench run`,
   looping on stdin. Per-call overhead is measured for each
   comparator (FFI call overhead for fpLLL, steady-state request overhead for
@@ -465,7 +465,7 @@ classification below is mirrored as structured metadata in
   are reported across the full (potentially densified) parameter
   ladder of each input family, with both raw and overhead-adjusted
   values where the thresholds in
-  [§Headline reports — Comparator ratios](../benchmarking.md#headline-reports)
+  [§Headline reports — Comparator ratios](https://github.com/kim-em/hex-dev/blob/main/SPEC/benchmarking.md#headline-reports)
   apply.
 
   **Headline comparator plot — six curves.** The per-family plots at
@@ -509,7 +509,7 @@ gives ~ n³ integer arithmetic operations with operand bit-width
 growing in `n` per Hadamard's bound. This shape is distinct from
 the LLL outer loop's ~ n² iterations × O(n) work on
 near-orthogonal random input. Per the
-[SPEC/benchmarking.md §Attribution rule](../benchmarking.md#the-attribution-rule),
+[SPEC/benchmarking.md §Attribution rule](https://github.com/kim-em/hex-dev/blob/main/SPEC/benchmarking.md#the-attribution-rule),
 each must be verified by its own `setup_benchmark` so a future
 profiling finding is attributable to one phase or the other:
 
@@ -524,11 +524,11 @@ dominant inclusive cost on each input family must be attributable
 to one of these registered targets, or the audit files an
 audit-found issue per
 [PLAN/Conventions.md §Bench-found, conformance-found, and audit-found
-issues](../../PLAN/Conventions.md#bench-found-conformance-found-and-audit-found-issues).
+issues](https://github.com/kim-em/hex-dev/blob/main/PLAN/Conventions.md#bench-found-conformance-found-and-audit-found-issues).
 
 HexLLL's parametric scientific registrations use
 `signalFloorMultiplier := 1.0` per
-[SPEC/benchmarking.md §Spawn-floor filter](../benchmarking.md#spawn-floor-filter).
+[SPEC/benchmarking.md §Spawn-floor filter](https://github.com/kim-em/hex-dev/blob/main/SPEC/benchmarking.md#spawn-floor-filter).
 The registered targets run warm child-side inner-repeat batches; a
 slow scheduled host startup should be visible in the export metadata
 but must not by itself erase the fixed Phase-4 ladder.
@@ -649,7 +649,7 @@ elsewhere.
 **Provider hook.** `lll` consults an `opaque @[extern]` hook that supplies a
 candidate when an external reducer is registered and signals absence
 otherwise (governed by the *untrusted dispatch hooks* clause in
-[SPEC/SPEC.md](../SPEC.md)). The hook is process-stable (availability is fixed
+[SPEC/SPEC.md §Project-wide proof policy](https://github.com/kim-em/hex-dev/blob/main/SPEC/SPEC.md#project-wide-proof-policy)). The hook is process-stable (availability is fixed
 at first probe and cached), returns only a candidate, and is queried for
 availability *before* any input marshalling, so the native path pays at most a
 single cached probe. The hook's C body probes for the provider's versioned
@@ -957,7 +957,7 @@ where:
     lllFuel s = (s.potential + 1) * (n + 1)
 
 The `fuel = 0` branch returns the current basis. This is classified
-under `SPEC/design-principles.md` §8 as
+in [the project's design-principles spec](https://github.com/kim-em/hex-dev/blob/main/SPEC/design-principles.md) as
 `unreachable-by-pipeline-invariant`: for independent public inputs,
 the fuel-sufficiency theorem proves that `lllFuel` is enough for the
 loop to reach `k = n` before the fallback branch is taken.
