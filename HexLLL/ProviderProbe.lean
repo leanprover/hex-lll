@@ -1,8 +1,13 @@
-import HexLLL.Basic
+module
+
+public import HexLLL.Basic
+
+public section
 
 namespace Hex
 namespace LLLProviderProbe
 
+@[expose]
 def main (args : List String) : IO UInt32 := do
   let expected ←
     match args with
@@ -27,5 +32,6 @@ def main (args : List String) : IO UInt32 := do
 end LLLProviderProbe
 end Hex
 
+@[expose]
 def main (args : List String) : IO UInt32 :=
   Hex.LLLProviderProbe.main args
