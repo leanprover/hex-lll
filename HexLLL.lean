@@ -1,1 +1,5 @@
-import HexLLL.Basic
+module
+
+public import HexLLL.Basic
+
+public section
