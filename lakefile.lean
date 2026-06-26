@@ -8,7 +8,7 @@ require batteries from git
 require HexMatrix from git
   "https://github.com/kim-em/hex-matrix.git" @ "ad566de56bb6aea7fee8b9ec922c19e751df230f"
 require HexGramSchmidt from git
-  "https://github.com/kim-em/hex-gram-schmidt.git" @ "c02a134d84c68e07a65cff52262f651891a51364"
+  "https://github.com/kim-em/hex-gram-schmidt.git" @ "2f42fcc402544d32448efd94a22ad5ae6d4a29b7"
 
 private def hexlllProviderOTarget (pkg : Package) : FetchM (Job FilePath) := do
   let oFile := pkg.dir / defaultBuildDir / "HexLLL" / "ffi" / "lean_hexlll_provider.o"
