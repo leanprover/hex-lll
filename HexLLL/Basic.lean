@@ -809,7 +809,7 @@ def divPos (S : Int) (a b : Ival) : Ival :=
 common (sign-definite) cases cost two integer multiplications instead of
 four products plus comparisons. Returns `(lo, hi)` at the product scale of
 its inputs. -/
-@[inline] def prodBounds (a b : Ival) : Int × Int :=
+@[expose, inline] def prodBounds (a b : Ival) : Int × Int :=
   if 0 ≤ a.lo then
     if 0 ≤ b.lo then (a.lo * b.lo, a.hi * b.hi)
     else if b.hi ≤ 0 then (a.hi * b.lo, a.lo * b.hi)
@@ -849,7 +849,7 @@ def dotStep (S : Int) (mu r : Array Ival) (g : Int) (t : Nat) : Ival :=
 /-- One column step of the per-row fold: extend the `r` row with the
 enclosure of `⟨b_i, b*_j⟩` and the `μ` row with the enclosure of
 `μ[i][j] = ⟨b_i, b*_j⟩ / ‖b*_j‖²`. -/
-@[inline] def rowStep (S : Int) (gRow : Array Int) (mus : Array (Array Ival))
+@[expose, inline] def rowStep (S : Int) (gRow : Array Int) (mus : Array (Array Ival))
     (bstars : Array Ival) (acc : Array Ival × Array Ival) (j : Nat) :
     Array Ival × Array Ival :=
   let r := dotStep S mus[j]! acc.1 gRow[j]! j
@@ -867,7 +867,7 @@ def row (S : Int) (gRow : Array Int) (mus : Array (Array Ival))
 
 /-- One row step of the pass fold: run `row`, demand a strictly positive
 norm enclosure, and extend the accumulated enclosure state. -/
-@[inline] def passStep (S : Int) (g : Array (Array Int))
+@[expose, inline] def passStep (S : Int) (g : Array (Array Int))
     (acc : Array (Array Ival) × Array Ival) (i : Nat) :
     Option (Array (Array Ival) × Array Ival) :=
   let r := row S g[i]! acc.1 acc.2 i
@@ -1758,7 +1758,7 @@ namespace SteeredState
 
 /-- Round to the nearest integer (ties away from zero). Steers only; soundness
 never depends on the rounded value. -/
-@[inline] def fRound (x : Float) : Int := (Float.floor (x + 0.5)).toInt64.toInt
+@[expose, inline] def fRound (x : Float) : Int := (Float.floor (x + 0.5)).toInt64.toInt
 
 /-- Initial state: exact integer basis `b`, with `mu`/`bb` from one float
 Cholesky pass over the exact Gram entries `⟨b_i, b_j⟩`. -/
