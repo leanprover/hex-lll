@@ -24,10 +24,13 @@ extern_lib hexlllffi (pkg) := do
 
 @[default_target]
 lean_lib HexLLL where
-  moreLinkArgs := #[
-    s!"{(defaultBuildDir / "lib" / nameToStaticLib "hexlllffi").toString}",
-    "-ldl"
-  ]
+  precompileModules := true
+  extraDepTargets := #[`hexlllffi]
+  moreLinkArgs :=
+    if System.Platform.isOSX then
+      #[]
+    else
+      #["-ldl"]
 
 lean_exe hexlll_provider_probe where
   root := `HexLLL.ProviderProbe
