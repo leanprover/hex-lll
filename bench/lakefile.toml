@@ -12,9 +12,8 @@ rev = "c58addf35ccf03634ad4145ca522a30681bd8779"
 
 [[lean_lib]]
 name = "HexLLLBench"
-globs = ["HexLLLBench.Inputs", "HexLLLBench.Targets", "HexLLLBench.Main"]
+precompileModules = true
 
 [[lean_exe]]
 name = "hexlll_bench"
 root = "HexLLLBench.Main"
-supportInterpreter = true
