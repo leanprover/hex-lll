@@ -8,8 +8,13 @@ path = ".."
 [[require]]
 name = "lean-bench"
 git = "https://github.com/kim-em/lean-bench.git"
-rev = "09645b5beba21307266f4e0bf375c3c363550ae9"
+rev = "c58addf35ccf03634ad4145ca522a30681bd8779"
+
+[[lean_lib]]
+name = "HexLLLBench"
+globs = ["HexLLLBench.Inputs", "HexLLLBench.Targets", "HexLLLBench.Main"]
 
 [[lean_exe]]
 name = "hexlll_bench"
-root = "HexLLL.Bench"
+root = "HexLLLBench.Main"
+supportInterpreter = true
