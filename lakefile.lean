@@ -24,7 +24,6 @@ extern_lib hexlllffi (pkg) := do
 
 @[default_target]
 lean_lib HexLLL where
-  precompileModules := true
   extraDepTargets := #[`hexlllffi]
   moreLinkArgs :=
     if System.Platform.isOSX then

@@ -1,9 +1,6 @@
 module
 
-public import HexLLLBench.Inputs
-public import HexLLLBench.Targets
-import all HexLLLBench.Inputs
-import all HexLLLBench.Targets
+import HexLLLBench
 
 public section
 
