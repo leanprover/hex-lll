@@ -917,7 +917,10 @@ inequalities being certified carry slack by design: the dispatch requests a
 weaker `(δ, 11/20)`, so size reduction clears `11/20` by `11/20 − requestedEta`
 and Lovász clears `δ` by `(requestedDelta δ − δ)·d[i+1]²`. A fixed precision
 decides them on a correctly-reduced candidate; any indecision falls back to
-the exact checker rather than failing. -/
+the exact checker rather than failing. The 128-bit width is fixed (independent
+of input size) and chosen to comfortably exceed the per-step slack margins for
+the documented input families, keeping every enclosure at a small, predictable
+arithmetic cost. -/
 @[expose]
 def intervalPrec : Nat := 128
 
