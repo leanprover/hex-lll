@@ -1,8 +1,25 @@
+/-
+Copyright (c) 2026 Lean FRO, LLC. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Kim Morrison
+-/
+
 module
 
 public import HexLLL.Basic
 
 public section
+
+/-!
+Executable probe entry point for the `hex-lll` external reduction provider.
+
+This module defines a small `main` driver that checks the optional native LLL
+provider against an expected `absent`/`present` state.  It compares
+`LLLProvider.providerAvailable` to the argument, and when the provider is
+expected to be absent it additionally confirms that `LLLProvider.providerReduce`
+reports `.error` rather than succeeding.  The driver returns process exit codes
+(`0` on agreement, `1`/`2` on mismatch or misuse) for use as a CI check.
+-/
 
 namespace Hex
 namespace LLLProviderProbe
