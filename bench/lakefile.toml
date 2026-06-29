@@ -8,7 +8,7 @@ path = ".."
 [[require]]
 name = "lean-bench"
 git = "https://github.com/kim-em/lean-bench.git"
-rev = "c58addf35ccf03634ad4145ca522a30681bd8779"
+rev = "fa30c2763cf523f3ac8e46dc3a1dad0845a40098"
 
 [[lean_lib]]
 name = "HexLLLBench"
