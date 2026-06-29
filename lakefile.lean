@@ -6,9 +6,9 @@ package «hex-lll» where
 require batteries from git
   "https://github.com/leanprover-community/batteries.git" @ "v4.30.0-rc2"
 require HexMatrix from git
-  "https://github.com/kim-em/hex-matrix.git" @ "2035afb6435c35a22f5c3aff77b706f554afd616"
+  "https://github.com/kim-em/hex-matrix.git" @ "eaaf4bf8982890184f109efa78bb8a650b1fb835"
 require HexGramSchmidt from git
-  "https://github.com/kim-em/hex-gram-schmidt.git" @ "2d77ad831338136fecdcae1af67d5f54ece34ea2"
+  "https://github.com/kim-em/hex-gram-schmidt.git" @ "73a2aee606734a2bee8dd809bc88f087c9c3e24f"
 
 private def hexlllProviderOTarget (pkg : Package) : FetchM (Job FilePath) := do
   let oFile := pkg.dir / defaultBuildDir / "HexLLL" / "ffi" / "lean_hexlll_provider.o"
