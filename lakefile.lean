@@ -4,11 +4,11 @@ open System Lake DSL
 package «hex-lll» where
 
 require HexBasic from git
-  "https://github.com/kim-em/hex-basic.git" @ "49d4eb822ce66aa14b18c2472c18848a2411792d"
+  "https://github.com/kim-em/hex-basic.git" @ "c9cb6bcb3287ea0870f66c9dfcba08baa08f97f6"
 require HexMatrix from git
-  "https://github.com/kim-em/hex-matrix.git" @ "a84b3d2bd4186eaebcabbffe0f8bae32b752eccb"
+  "https://github.com/kim-em/hex-matrix.git" @ "d47efb355647c3ab888a035ecfe395be286f2881"
 require HexGramSchmidt from git
-  "https://github.com/kim-em/hex-gram-schmidt.git" @ "4fd416d0ee1ad4b0bd002dcd75774a91e04c2355"
+  "https://github.com/kim-em/hex-gram-schmidt.git" @ "42a1525418b1545ede3c99734e2566be774f0efc"
 
 private def hexlllProviderOTarget (pkg : Package) : FetchM (Job FilePath) := do
   let oFile := pkg.dir / defaultBuildDir / "HexLLL" / "ffi" / "lean_hexlll_provider.o"
