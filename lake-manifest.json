@@ -3,6 +3,18 @@
   "packagesDir": ".lake/packages",
   "packages": [
     {
+      "url": "https://github.com/kim-em/hex-basic.git",
+      "type": "git",
+      "subDir": null,
+      "scope": "",
+      "rev": "40bc251f7a825a3927fc13309189b867316253c3",
+      "name": "HexBasic",
+      "manifestFile": "lake-manifest.json",
+      "inputRev": "40bc251f7a825a3927fc13309189b867316253c3",
+      "inherited": false,
+      "configFile": "lakefile.lean"
+    },
+    {
       "url": "https://github.com/kim-em/hex-gram-schmidt.git",
       "type": "git",
       "subDir": null,

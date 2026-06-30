@@ -3,6 +3,8 @@ open System Lake DSL
 
 package «hex-lll» where
 
+require HexBasic from git
+  "https://github.com/kim-em/hex-basic.git" @ "40bc251f7a825a3927fc13309189b867316253c3"
 require HexMatrix from git
   "https://github.com/kim-em/hex-matrix.git" @ "93bc6617cbb4dab7dc04d18fc76b92090489b55e"
 require HexGramSchmidt from git
