@@ -12,7 +12,7 @@
       "manifestFile": "lake-manifest.json",
       "inputRev": "49d4eb822ce66aa14b18c2472c18848a2411792d",
       "inherited": false,
-      "configFile": "lakefile.lean"
+      "configFile": "lakefile.toml"
     },
     {
       "url": "https://github.com/kim-em/hex-gram-schmidt.git",
