@@ -21,11 +21,11 @@ Covered operations:
 - `Hex.lll.firstShortVector`
 - `Hex.lll.shortVectors`
 - `Hex.certCheck`
-- `Hex.LLLState.sizeReduceColumn`
-- `Hex.LLLState.sizeReduce`
-- `Hex.LLLState.swapStep`
-- `Hex.LLLState.gramSchmidtCoeff`
-- `Hex.LLLState.potential`
+- `Hex.Internal.LLLState.sizeReduceColumn`
+- `Hex.Internal.LLLState.sizeReduce`
+- `Hex.Internal.LLLState.swapStep`
+- `Hex.Internal.LLLState.gramSchmidtCoeff`
+- `Hex.Internal.LLLState.potential`
 
 Covered properties:
 - committed row-combination witnesses satisfy lattice membership.
@@ -62,7 +62,9 @@ Covered edge cases:
 namespace Hex
 namespace LLLConformance
 
-private def identity8 : Matrix Int 8 8 := 1
+open Hex.Internal
+
+private def identity8 : Matrix Int 8 8 := Matrix.identity 8
 
 private def zero8 : Matrix Int 8 8 := 0
 
@@ -339,7 +341,7 @@ private def independentCheck (b : Matrix Int n m) : Bool :=
 #guard match LLLProvider.certifyFlat certInput2 (3/4 : Rat) malformedFlat2 with
   | some _ => false
   | none => true
-#guard !certCheck etaBoundary2 etaBoundary2 1 1 (3/4 : Rat) (11/20 : Rat)
+#guard !certCheck etaBoundary2 etaBoundary2 (Matrix.identity (R := Int) 2) (Matrix.identity (R := Int) 2) (3/4 : Rat) (11/20 : Rat)
 
 private def stateOf (b : Matrix Int n m) : LLLState n m :=
   let gs := GramSchmidt.Int.data b
