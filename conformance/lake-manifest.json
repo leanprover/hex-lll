@@ -3,6 +3,18 @@
   "packagesDir": ".lake/packages",
   "packages": [
     {
+      "url": "https://github.com/kim-em/hex-basic.git",
+      "type": "git",
+      "subDir": null,
+      "scope": "",
+      "rev": "49d4eb822ce66aa14b18c2472c18848a2411792d",
+      "name": "HexBasic",
+      "manifestFile": "lake-manifest.json",
+      "inputRev": "49d4eb822ce66aa14b18c2472c18848a2411792d",
+      "inherited": true,
+      "configFile": "lakefile.toml"
+    },
+    {
       "url": "https://github.com/kim-em/hex-test-kit.git",
       "type": "git",
       "subDir": null,
