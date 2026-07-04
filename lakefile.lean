@@ -6,9 +6,9 @@ package «hex-lll» where
 require HexBasic from git
   "https://github.com/leanprover/hex-basic.git" @ "f1580d28c2e9ff9e8d4d7cdef9dccbaa17780b03"
 require HexMatrix from git
-  "https://github.com/leanprover/hex-matrix.git" @ "db6b7f7aebf6d1fb193016cbc5b21214bf40ab68"
+  "https://github.com/leanprover/hex-matrix.git" @ "99706e1ab14f79a915b3fd86ffa37da4a800a0d6"
 require HexGramSchmidt from git
-  "https://github.com/leanprover/hex-gram-schmidt.git" @ "f5ba63bd84e4086b714375bf3600e4d8cbc67987"
+  "https://github.com/leanprover/hex-gram-schmidt.git" @ "ebac2cab09a009da396d905d905ebe054532212e"
 
 private def hexlllProviderOTarget (pkg : Package) : FetchM (Job FilePath) := do
   let oFile := pkg.dir / defaultBuildDir / "HexLLL" / "ffi" / "lean_hexlll_provider.o"
