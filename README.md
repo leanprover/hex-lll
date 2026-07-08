@@ -49,22 +49,24 @@ def B : Matrix Int 3 3 := Matrix.ofFn fun i j =>
   | 2, 0 => 3 | 2, 1 => 5 | 2, 2 => 6
   | _, _ => 0
 
--- The verified entry point. Given a proof `hind : B.independent`, `lll` returns
--- a `(δ, 11/20)`-reduced basis of the same lattice and `lll.firstShortVector`
--- reads off its provably short first row. The short-vector guarantee itself is
--- the theorem `lll_first_row_norm_sq_le` in `hex-lll-mathlib`.
+-- The verified entry point. `lll` returns a `(δ, 11/20)`-reduced basis of the
+-- same lattice and `lll.firstShortVector` reads off its provably short first
+-- row. The three proof arguments are `autoParam`s (`:= by grind`), so a call at
+-- a concrete `δ` is just `lll B (3 / 4)`. The short-vector guarantee itself is
+-- the theorem `lll_first_row_norm_sq_le` in `hex-lll-mathlib`, which takes the
+-- `B.independent` hypothesis separately — a precondition of the theorem, not of
+-- the computation.
 #check @lll.firstShortVector
 #check @lll
 
--- To run the reducer on data without supplying an independence proof, use the
--- proof-free variants. They run the exact `lllNative` directly (the body of
--- `lll`'s native path, skipping the provider dispatch) and carry no exported
--- short-vector theorem unless you separately prove `B.independent`.
-#eval lllNative.firstShortVector B (3 / 4) (by decide +kernel) (by decide +kernel) (by decide)
-#eval lllNative.shortVectors B (3 / 4) (by decide +kernel) (by decide +kernel) (by decide)
+-- `lllNative.firstShortVector` / `lllNative.shortVectors` run the exact
+-- `lllNative` directly (the body of `lll`'s native path, skipping the provider
+-- dispatch). Like `lll`, their proof arguments are filled by `by grind`.
+#eval lllNative.firstShortVector B (3 / 4)
+#eval lllNative.shortVectors B (3 / 4)
 
 -- The executable integer reducedness oracle.
-#eval lllReducedInt (Matrix.identity 3) (3 / 4) (1 / 2)   -- true
+#eval lllReducedExact (Matrix.identity 3) (3 / 4) (1 / 2)   -- true
 ```
 
 # Functionality
@@ -98,7 +100,7 @@ The surface, by group:
   guarantee.
 - `lllNative.firstShortVector` and `lllNative.shortVectors`: proof-free
   variants of the entry points for callers without an independence proof.
-- `lllReducedInt`, `lllReducedInterval`, and `lllReducedCheck`: the exact,
+- `lllReducedExact`, `lllReducedInterval`, and `lllReducedCheck`: the exact,
   fixed-precision, and dispatched reducedness oracles; `certCheck` is the
   integer certificate checker for an external reducer's output.
 - `Matrix.memLattice`, `Matrix.independent`, and `Vector.normSq` for stating

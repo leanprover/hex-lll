@@ -316,12 +316,12 @@ private def independentCheck (b : Matrix Int n m) : Bool :=
 #guard !independentCheck zero8
 #guard !independentCheck dependent8x4
 
--- `lllReducedInt` is the executable reducedness oracle over
+-- `lllReducedExact` is the executable reducedness oracle over
 -- `GramSchmidt.Int.data`: identity is fully (3/4, 1/2)-reduced, while zero
 -- and dependent bases fail independence.
-#guard lllReducedInt identity8 (3/4 : Rat) (1/2 : Rat)
-#guard !lllReducedInt zero8 (3/4 : Rat) (1/2 : Rat)
-#guard !lllReducedInt dependent8x4 (3/4 : Rat) (1/2 : Rat)
+#guard lllReducedExact identity8 (3/4 : Rat) (1/2 : Rat)
+#guard !lllReducedExact zero8 (3/4 : Rat) (1/2 : Rat)
+#guard !lllReducedExact dependent8x4 (3/4 : Rat) (1/2 : Rat)
 
 #guard Matrix.row certReduced2 f0_2 = Matrix.row certInput2 f1_2
 #guard Matrix.row certReduced2 f1_2 =
@@ -390,16 +390,22 @@ private def typicalState : LLLState 8 8 := stateOf typical8
 #guard (Matrix.row bzStyleBasis f1_3).get f3_4 = -1
 #guard (Matrix.row bzStyleBasis f2_3).get f3_4 = 2
 
-example (hδ : (121 / 400 : Rat) < 3 / 4) (hδ' : (3 / 4 : Rat) ≤ 1)
-    (hind : bzStyleBasis.independent) :
-    lll.firstShortVector bzStyleBasis (3 / 4) hδ hδ' (by decide) hind =
-      Matrix.row (lll bzStyleBasis (3 / 4) hδ hδ' (by decide) hind) f0_3 := by
+example (hδ : (121 / 400 : Rat) < 3 / 4) (hδ' : (3 / 4 : Rat) ≤ 1) :
+    lll.firstShortVector bzStyleBasis (3 / 4) hδ hδ' (by decide) =
+      Matrix.row (lll bzStyleBasis (3 / 4) hδ hδ' (by decide)) f0_3 := by
   rfl
 
-example (hδ : (121 / 400 : Rat) < 3 / 4) (hδ' : (3 / 4 : Rat) ≤ 1)
-    (hind : bzStyleBasis.independent) :
-    lll.shortVectors bzStyleBasis (3 / 4) hδ hδ' (by decide) hind =
-      (lll bzStyleBasis (3 / 4) hδ hδ' (by decide) hind).rows.toArray := by
+example (hδ : (121 / 400 : Rat) < 3 / 4) (hδ' : (3 / 4 : Rat) ≤ 1) :
+    lll.shortVectors bzStyleBasis (3 / 4) hδ hδ' (by decide) =
+      (lll bzStyleBasis (3 / 4) hδ hδ' (by decide)).rows.toArray := by
+  rfl
+
+-- The three proof arguments are `autoParam`s (`:= by grind`), so at a concrete
+-- `δ`/`n` the public entry points take no proof arguments at all.
+example : lll.firstShortVector bzStyleBasis (3 / 4) = Matrix.row (lll bzStyleBasis (3 / 4)) f0_3 := by
+  rfl
+
+example : lll.shortVectors bzStyleBasis (3 / 4) = (lll bzStyleBasis (3 / 4)).rows.toArray := by
   rfl
 
 example :
