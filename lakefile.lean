@@ -31,5 +31,5 @@ lean_lib HexLLL where
     else
       #["-ldl"]
 
-lean_exe hexlll_provider_probe where
-  root := `HexLLL.ProviderProbe
+lean_exe hexlll_external_reduction where
+  root := `HexLLL.ExternalReduction

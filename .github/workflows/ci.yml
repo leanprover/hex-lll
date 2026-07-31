@@ -36,14 +36,14 @@ jobs:
           toolchain="$(sed 's|/|--|; s|:|---|' lean-toolchain)"
           echo "LD_LIBRARY_PATH=$HOME/.elan/toolchains/$toolchain/lib/lean:${LD_LIBRARY_PATH:-}" \
             >> "$GITHUB_ENV"
-      - name: Build provider probe
-        run: lake build hexlll_provider_probe
-      - name: Provider probe (absent + LD_PRELOAD present)
+      - name: Build external-reduction check
+        run: lake build hexlll_external_reduction
+      - name: External reduction (absent + LD_PRELOAD present)
         run: |
-          .lake/build/bin/hexlll_provider_probe absent
+          .lake/build/bin/hexlll_external_reduction absent
           cc -shared -fPIC scripts/ci/hexlll_probe_provider.c -o .lake/build/hexlll_probe_provider.so
           LD_PRELOAD="$PWD/.lake/build/hexlll_probe_provider.so" \
-            .lake/build/bin/hexlll_provider_probe present
+            .lake/build/bin/hexlll_external_reduction present
       - name: Build conformance
         run: |
           cd conformance
@@ -88,7 +88,7 @@ jobs:
             echo "ERROR: a source file imports Mathlib"; exit 1; fi
           echo "Mathlib-free OK"
   # macOS job exists solely for the FFI dyld symbol-resolution cross-check
-  # (the LLL provider probe); per SPEC/CI.md this is the one justified second runner.
+  # (the LLL external-reduction check); per SPEC/CI.md this is the one justified second runner.
   build-macos:
     runs-on: macos-latest
     steps:
@@ -97,11 +97,11 @@ jobs:
         with:
           auto-config: false
           build: false
-      - name: Build provider probe
-        run: lake build hexlll_provider_probe
-      - name: Provider probe (absent + DYLD_INSERT present)
+      - name: Build external-reduction check
+        run: lake build hexlll_external_reduction
+      - name: External reduction (absent + DYLD_INSERT present)
         run: |
-          .lake/build/bin/hexlll_provider_probe absent
+          .lake/build/bin/hexlll_external_reduction absent
           cc -shared -fPIC scripts/ci/hexlll_probe_provider.c -o .lake/build/hexlll_probe_provider.dylib
           DYLD_INSERT_LIBRARIES="$PWD/.lake/build/hexlll_probe_provider.dylib" \
-            .lake/build/bin/hexlll_provider_probe present
+            .lake/build/bin/hexlll_external_reduction present
