@@ -1,6 +1,11 @@
 name = "hex-lll-conformance"
 defaultTargets = ["HexLLLConformance", "hexlll_emit_fixtures"]
 
+leanOptions = [
+  { name = "doc.verso", value = true },
+  { name = "doc.verso.suggestions", value = false },
+]
+
 [[require]]
 name = "HexLLL"
 path = ".."
@@ -8,7 +13,7 @@ path = ".."
 [[require]]
 name = "hex-test-kit"
 git = "https://github.com/leanprover/hex-test-kit.git"
-rev = "610207eec0ca214928eec42a6dd2084d859bf94d"
+rev = "85ab4582fbe0d86bb38f5429b17b9154fede75f0"
 
 [[lean_lib]]
 name = "HexLLLConformance"

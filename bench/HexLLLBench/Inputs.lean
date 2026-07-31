@@ -114,7 +114,7 @@ def prepStateInput (n : Nat) : StateInput :=
       change n + 1 < n + 2
       omega }
 
-/-! ## Phase-4 `lll.firstShortVector` input families. -/
+/-! # Phase-4 `lll.firstShortVector` input families. -/
 
 /-- BZ-shaped triangular coefficient block from `HexLLL/EmitFixtures.lean`. -/
 def bzRecombinationCoeff (factor col : Nat) : Int :=
@@ -223,7 +223,7 @@ def prepHarshCubicInput (n : Nat) : FirstShortVectorInput :=
     hn := by
       exact Nat.le_max_right n 1 }
 
-/-! ### Ajtai-style worst-case family (fplll `gen_trg` port)
+/-! # Ajtai-style worst-case family (fplll `gen_trg` port)
 
 This is the lower-triangular worst-case family that drives LLL toward its
 `Θ(d² log B)` swap bound (Nguyen-Stehlé, *LLL on the Average*, ANTS-VII 2006).
@@ -320,7 +320,7 @@ def ajtaiProfileSteep (d : Nat) : Bool :=
 -- `#guard` is a command and cannot carry a docstring).
 #guard ajtaiProfileSteep 8
 
-/-! ### q-ary (LWE/SIS) family (fplll `gen_qary` port)
+/-! # q-ary (LWE/SIS) family (fplll `gen_qary` port)
 
 Faithful port of fplll's `gen_qary` (`latticegen q <d> <k> <b>`): the `d × d`
 block matrix `[[I_{d-k}, H], [0, q·I_k]]` with `H` uniform mod `q` and
@@ -356,7 +356,7 @@ def prepQaryInput (n : Nat) : FirstShortVectorInput :=
 
 #guard qaryModulus 8 ≥ 128 && qaryModulus 8 < 256
 
-/-! ### NTRU family (fplll `gen_ntrulike` port)
+/-! # NTRU family (fplll `gen_ntrulike` port)
 
 Faithful port of fplll's `gen_ntrulike` (`latticegen n <2d> <b>`): the `2d × 2d`
 block matrix `[[I, Rot(h)], [0, q·I]]` where `Rot(h)` is the circulant of a
@@ -401,7 +401,7 @@ def prepNtruInput (n : Nat) : FirstShortVectorInput :=
 -- The planted property `h(1) ≡ 0 mod q` (the row sum of `Rot(h)` is `0 mod q`).
 #guard (let q := ntruModulus; (List.range 4).foldl (fun a i => (a + ntruH 4 i) % q) 0 == 0)
 
-/-! ### knapsack / integer-relation family (fplll `gen_intrel` port)
+/-! # knapsack / integer-relation family (fplll `gen_intrel` port)
 
 Faithful port of fplll's `gen_intrel` (`latticegen r <d> <b>`): the **rectangular**
 `d × (d+1)` matrix whose row `i` is `[rand_b, e_{i+1}]` (a random `b`-bit weight
@@ -553,7 +553,7 @@ initialize certifiedHarshCubic60Ref : IO.Ref (Option (FirstShortVectorInput × A
 initialize certifiedHarshCubic65Ref : IO.Ref (Option (FirstShortVectorInput × Array Int)) ←
   IO.mkRef none
 
-/-! ## Phase-4 `LLLState.ofBasis` input families. -/
+/-! # Phase-4 `LLLState.ofBasis` input families. -/
 
 /-- Entry generator for bounded random-looking square bases. -/
 def ofBasisRandomBoundedEntry (rows row col salt : Nat) : Int :=
@@ -585,6 +585,11 @@ def ofBasisRandomBoundedBasis (rows salt : Nat) : Matrix Int rows rows :=
 /-- Deterministic row-major square basis for the harsh-cubic family. -/
 def ofBasisHarshCubicBasis (rows salt : Nat) : Matrix Int rows rows :=
   Matrix.ofFn fun i j => ofBasisHarshCubicEntry rows i.val j.val salt
+
+/-- Deterministic bounded-entry basis with `8 * rows + 1` ambient columns.
+This is the `rows ≪ cols` companion to the square interval-checker fixture. -/
+def intervalWideBasis (rows salt : Nat) : Matrix Int rows (8 * rows + 1) :=
+  Matrix.ofFn fun i j => ofBasisRandomBoundedEntry rows i.val j.val salt
 
 /-- General constructor for an `LLLState.ofBasis` benchmark fixture.
 The benchmark parameter maps to `rows = n + 3`, so the final two row indices
@@ -621,6 +626,17 @@ def prepOfBasisHarshCubicInput (n : Nat) : OfBasisInput :=
   let basis := ofBasisHarshCubicBasis rows 887
   prepOfBasisInput n rows basis
 
+/-- Per-parameter square fixture for the interval reducedness path. -/
+def prepIntervalSquareInput (n : Nat) : OfBasisInput :=
+  prepOfBasisRandomBoundedInput n
+
+/-- Per-parameter wide fixture for the interval reducedness path. -/
+def prepIntervalWideInput (n : Nat) : OfBasisInput :=
+  let rows := n + 3
+  let cols := 8 * rows + 1
+  let basis := intervalWideBasis rows 941
+  prepOfBasisInput n cols basis
+
 /-- Stable checksum for integer vectors. -/
 def intVectorChecksum (v : Vector Int n) : Int :=
   (List.finRange n).foldl
@@ -631,6 +647,12 @@ def intVectorChecksum (v : Vector Int n) : Int :=
 def natVectorChecksum (v : Vector Nat n) : Nat :=
   (List.finRange n).foldl
     (fun acc i => acc * 65_537 + v[i])
+    0
+
+/-- Stable checksum for row-major nested integer arrays. -/
+def intRowsChecksum (rows : Array (Array Int)) : Int :=
+  rows.foldl
+    (fun acc row => row.foldl (fun rowAcc x => rowAcc * 65_537 + x) acc)
     0
 
 /-- Stable checksum for two integer rows. -/
@@ -713,6 +735,28 @@ def ofBasisHarshCubicComplexity (n : Nat) : Nat :=
   let rows := n + 3
   rows * ofBasisComplexity rows rows * Nat.log2 (rows + 1)
 
+/-- Construction model for the square interval-checker Gram rows. -/
+def intervalGramRowsSquareComplexity (n : Nat) : Nat :=
+  let rows := n + 3
+  rows * rows * rows
+
+/-- Construction model for the wide interval-checker Gram rows. -/
+def intervalGramRowsWideComplexity (n : Nat) : Nat :=
+  let rows := n + 3
+  rows * rows * (8 * rows + 1)
+
+/-- Full fixed-precision interval-checker model on a square basis: Gram-row
+construction plus the cubic interval Gram–Schmidt pass. -/
+def reducedIntervalSquareComplexity (n : Nat) : Nat :=
+  let rows := n + 3
+  2 * rows * rows * rows
+
+/-- Full fixed-precision interval-checker model on a wide basis: Gram-row
+construction plus the cubic interval Gram–Schmidt pass. -/
+def reducedIntervalWideComplexity (n : Nat) : Nat :=
+  let rows := n + 3
+  rows * rows * (8 * rows + 1) + rows * rows * rows
+
 /-- Benchmark target: construct the initial integer LLL state for a basis. -/
 def runOfBasisChecksum (input : OfBasisInput) : Int :=
   let s := LLLState.ofBasis input.basis
@@ -729,6 +773,26 @@ def runOfBasisRandomBoundedChecksum (input : OfBasisInput) : Int :=
 /-- Benchmark target for the harsh-cubic input family. -/
 def runOfBasisHarshCubicChecksum (input : OfBasisInput) : Int :=
   runOfBasisChecksum input
+
+/-- Benchmark target: construct the exact row-major Gram data currently fed
+to the interval checker on a square basis. -/
+def runIntervalGramRowsSquareChecksum (input : OfBasisInput) : Int :=
+  intRowsChecksum (GramSchmidt.Int.gramRows input.basis)
+
+/-- Benchmark target: construct the exact row-major Gram data currently fed
+to the interval checker on a wide basis. -/
+def runIntervalGramRowsWideChecksum (input : OfBasisInput) : Int :=
+  intRowsChecksum (GramSchmidt.Int.gramRows input.basis)
+
+/-- Benchmark target: run the fixed-precision reducedness checker on a square
+basis. -/
+def runReducedIntervalSquareChecksum (input : OfBasisInput) : Nat :=
+  if lllReducedInterval input.basis then 1 else 0
+
+/-- Benchmark target: run the fixed-precision reducedness checker on a basis
+with many more ambient columns than rows. -/
+def runReducedIntervalWideChecksum (input : OfBasisInput) : Nat :=
+  if lllReducedInterval input.basis then 1 else 0
 
 /-- Benchmark target: one targeted size-reduction step. -/
 def runSizeReduceColumnChecksum (input : StateInput) : Int :=
@@ -787,12 +851,12 @@ library named by `HEX_FPLLL_FFI_LIB`, if that variable is set and non-empty.
 Idempotent: once a provider is active this is a cheap no-op, so the provider
 targets can call it lazily. This is the bench's opt-in replacement for the old
 implicit env read — the public `Hex.lll` surface no longer consults the
-environment; the bench does so explicitly here via `Hex.lll.loadProvider`. -/
+environment; the bench does so explicitly here via `Hex.lll.loadExternalReducer`. -/
 def ensureProviderLoaded : IO Unit := do
-  if ← lll.providerActive then
+  if ← lll.externalReducerActive then
     return
   match ← IO.getEnv "HEX_FPLLL_FFI_LIB" with
-  | some path => if path != "" then discard <| lll.loadProvider path
+  | some path => if path != "" then discard <| lll.loadExternalReducer path
   | none => pure ()
 
 /-- Benchmark target: run the public dispatched LLL path and checksum the
@@ -800,7 +864,7 @@ first row. If a real external provider is loaded, this target fails unless the
 certified dispatch accepts at least one candidate. -/
 def runDispatchedFirstShortVectorChecksum (input : FirstShortVectorInput) : IO Int := do
   ensureProviderLoaded
-  LLLProvider.resetDiagnostics
+  ExternalReducer.resetDiagnostics
   have hrows : 1 ≤ input.rows := input.hn
   let f0 : Fin input.rows := ⟨0, by omega⟩
   -- Drive the dispatch via the IO-based `tryReduce` so the provider call
@@ -810,12 +874,12 @@ def runDispatchedFirstShortVectorChecksum (input : FirstShortVectorInput) : IO I
   -- requestedEta)` the public dispatch asks of the reducer; certification
   -- stays against `(δ, 11/20)`, exactly the path `dispatch` exposes to `lll`.
   let δ : Rat := 3 / 4
-  let δFloat : Float := Float.ofInt (LLLProvider.requestedDelta δ).num
-    / Float.ofNat (LLLProvider.requestedDelta δ).den
-  let ηFloat : Float := Float.ofInt LLLProvider.requestedEta.num
-    / Float.ofNat LLLProvider.requestedEta.den
-  let entries := LLLProvider.matrixToEntries input.basis
-  let candidate? ← LLLProvider.tryReduce
+  let δFloat : Float := Float.ofInt (ExternalReducer.requestedDelta δ).num
+    / Float.ofNat (ExternalReducer.requestedDelta δ).den
+  let ηFloat : Float := Float.ofInt ExternalReducer.requestedEta.num
+    / Float.ofNat ExternalReducer.requestedEta.den
+  let entries := ExternalReducer.matrixToEntries input.basis
+  let candidate? ← ExternalReducer.tryReduce
     (USize.ofNat input.rows) (USize.ofNat input.cols) entries
     δFloat ηFloat 0 true
   -- Track whether `certCheck` itself accepted, not merely whether the payload
@@ -826,11 +890,11 @@ def runDispatchedFirstShortVectorChecksum (input : FirstShortVectorInput) : IO I
     | some cand =>
         let flat := #[0, Int.ofNat input.rows, Int.ofNat input.cols, 1]
           ++ cand.reduced ++ cand.transform ++ (cand.inverse?.getD #[])
-        match LLLProvider.certifyFlat input.basis δ flat with
+        match ExternalReducer.certifyFlat input.basis δ flat with
         | some triple => pure (triple.1, true)
         | none => pure (lllNative input.basis δ lllDeltaLower lllDeltaUpper input.hn, false)
     | none => pure (lllNative input.basis δ lllDeltaLower lllDeltaUpper input.hn, false)
-  if LLLProvider.providerAvailable () && !certified then
+  if ExternalReducer.externalReducerAvailable () && !certified then
     throw <| IO.userError
       "fplll provider loaded but the certified path rejected its candidate"
   return intVectorChecksum (Matrix.row reduced f0)
@@ -1026,7 +1090,7 @@ def runIsabelleCertifiedShortVectorNormSq (_tag : String) (input : FirstShortVec
 
 /-- Approximate `Rat → Float` for forwarding `δ` to the FFI provider. Precision
 is not part of correctness: the certified path checks the resulting candidate
-against the exact `δ` via integer arithmetic. Mirrors `LLLProvider.ratToFloat`
+against the exact `δ` via integer arithmetic. Mirrors `ExternalReducer.ratToFloat`
 (which is private). -/
 private def ratToFloat (r : Rat) : Float :=
   Float.ofInt r.num / Float.ofNat r.den
@@ -1034,23 +1098,23 @@ private def ratToFloat (r : Rat) : Float :=
 /-- Invoke fplll-ffi in-process via the dlopened provider and return the flat
 `(status, rows, cols, has_inverse, reduced, U, V?)` payload. The same payload
 shape powers both the raw fpLLL comparator (first-row checksum) and the
-certified path (`LLLProvider.certifyFlat`), so one FFI call covers both.
+certified path (`ExternalReducer.certifyFlat`), so one FFI call covers both.
 
 Raises `IO.userError` if the provider is absent (no `HEX_FPLLL_FFI_LIB` /
 unresolved `lean_fplll_lll_reduce`) or returns an error from `libfplll`. -/
 def requestFpLLLFlat (input : FirstShortVectorInput) : IO (Array Int) := do
   ensureProviderLoaded
-  if !LLLProvider.providerAvailable () then
+  if !ExternalReducer.externalReducerAvailable () then
     throw <| IO.userError
       "fplll-ffi provider absent — set HEX_FPLLL_FFI_LIB to libfplllffi"
   let δ : Rat := 3 / 4
-  let entries := LLLProvider.matrixToEntries input.basis
+  let entries := ExternalReducer.matrixToEntries input.basis
   -- Request the same stronger `(requestedDelta δ, requestedEta)` the public
   -- dispatch asks of the reducer, so the certified curve measures the exact
   -- reducer call production makes; certification stays against `(δ, 11/20)`.
-  match LLLProvider.providerReduce
+  match ExternalReducer.externalReduce
       (USize.ofNat input.rows) (USize.ofNat input.cols) entries
-      (ratToFloat (LLLProvider.requestedDelta δ)) (ratToFloat LLLProvider.requestedEta) 0 true with
+      (ratToFloat (ExternalReducer.requestedDelta δ)) (ratToFloat ExternalReducer.requestedEta) 0 true with
   | .error e => throw <| IO.userError s!"fplll-ffi: {e}"
   | .ok flat => return flat
 
@@ -1069,7 +1133,7 @@ def runFpLLLFirstShortVectorChecksum (input : FirstShortVectorInput) : IO Int :=
     0
 
 def certifyPayloadChecksum (input : FirstShortVectorInput) (payload : Array Int) : IO Int := do
-  match LLLProvider.certifyFlat input.basis (3 / 4 : Rat) payload with
+  match ExternalReducer.certifyFlat input.basis (3 / 4 : Rat) payload with
   | some triple =>
       have hrows : 1 ≤ input.rows := input.hn
       let f0 : Fin input.rows := ⟨0, by omega⟩
@@ -1079,7 +1143,7 @@ def certifyPayloadChecksum (input : FirstShortVectorInput) (payload : Array Int)
 
 /-- Benchmark target: fpLLL candidate production via fplll-ffi plus Lean's
 executable certificate checker. The same in-process payload that drives
-`runFpLLLFirstShortVectorChecksum` feeds `LLLProvider.certifyFlat`, so the
+`runFpLLLFirstShortVectorChecksum` feeds `ExternalReducer.certifyFlat`, so the
 certified curve and the raw fpLLL curve measure the identical C++ reducer. -/
 def runCertifiedFirstShortVectorChecksum (input : FirstShortVectorInput) : IO Int := do
   certifyPayloadChecksum input (← requestFpLLLFlat input)

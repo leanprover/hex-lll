@@ -3,12 +3,13 @@ open System Lake DSL
 
 package «hex-lll» where
 
+  leanOptions := #[⟨`doc.verso, true⟩, ⟨`doc.verso.suggestions, false⟩]
 require HexBasic from git
-  "https://github.com/leanprover/hex-basic.git" @ "f1580d28c2e9ff9e8d4d7cdef9dccbaa17780b03"
+  "https://github.com/leanprover/hex-basic.git" @ "a3ab4fd9a79efbe6b07337836b3b5828d22d65a6"
 require HexMatrix from git
-  "https://github.com/leanprover/hex-matrix.git" @ "d45bf749d6283726b8df43b5be9e6dde350666d6"
+  "https://github.com/leanprover/hex-matrix.git" @ "9b6ec9285021793e9f43e1c7b3b37da957b6f2c4"
 require HexGramSchmidt from git
-  "https://github.com/leanprover/hex-gram-schmidt.git" @ "6bae0c6ed6c19c44956dc69eb31487fc3596f01d"
+  "https://github.com/leanprover/hex-gram-schmidt.git" @ "4a3b351e56d510026a2327b77bf3711687ddeced"
 
 private def hexlllProviderOTarget (pkg : Package) : FetchM (Job FilePath) := do
   let oFile := pkg.dir / defaultBuildDir / "HexLLL" / "ffi" / "lean_hexlll_provider.o"

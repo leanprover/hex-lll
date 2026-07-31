@@ -4,14 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Kim Morrison
 -/
 
-import HexLLL.Basic
+import HexLLL
 
 /-!
 Core conformance checks for `HexLLL`.
 
 Oracle: core uses Lean-only checks; the CI oracle profile uses `fpylll` via
 `scripts/oracle/lll_fpylll.py`.
-Mode: always for core, if_available for the `fpylll` oracle profile.
+Mode: always for core, `if_available` for the `fpylll` oracle profile.
 
 Covered operations:
 - `Hex.Matrix.memLattice`
@@ -335,10 +335,10 @@ private def independentCheck (b : Matrix Int n m) : Bool :=
   (3/4 : Rat) (11/20 : Rat)
 #guard !certCheck certInput2 certReduced2 certTransform2 tamperedInverse2
   (3/4 : Rat) (11/20 : Rat)
-#guard match LLLProvider.certifyFlat certInput2 (3/4 : Rat) goodFlat2 with
+#guard match ExternalReducer.certifyFlat certInput2 (3/4 : Rat) goodFlat2 with
   | some _ => true
   | none => false
-#guard match LLLProvider.certifyFlat certInput2 (3/4 : Rat) malformedFlat2 with
+#guard match ExternalReducer.certifyFlat certInput2 (3/4 : Rat) malformedFlat2 with
   | some _ => false
   | none => true
 #guard !certCheck etaBoundary2 etaBoundary2 (Matrix.identity (R := Int) 2) (Matrix.identity (R := Int) 2) (3/4 : Rat) (11/20 : Rat)

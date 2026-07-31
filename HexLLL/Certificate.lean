@@ -74,7 +74,7 @@ theorem natAbs_le_maxAbs (M : Matrix Int n m) (i : Fin n) (j : Fin m) :
     M[i][j].natAbs ≤ maxAbs M := by
   have hrow : M[i] ∈ M.rows.toList := by
     have h : M.rows.toList[i.val]'(by simp) = M[i] := by
-      simp [Hex.Matrix.getRow, Fin.getElem_fin]
+      simp [Hex.Matrix.getRow]
     rw [← h]
     exact List.getElem_mem _
   have hentry : M[i][j] ∈ M[i].toList := by
@@ -323,7 +323,8 @@ theorem mulEqCert_iff {M : Matrix Int n n} {A C : Matrix Int n m} :
     have hrow := packDigits_inj ((n * maxAbs M * maxAbs A + maxAbs C).log2 + 2)
       (xs := (row (M * A) ⟨i, hi⟩).toList) (ys := (row C ⟨i, hi⟩).toList)
       (by simp) ?_ ?_ hi'
-    · exact Vector.toList_inj.mp hrow
+    · rw [Hex.Matrix.getElem_rows _ i hi, Hex.Matrix.getElem_rows _ i hi]
+      exact Vector.toList_inj.mp hrow
     · intro x hx
       obtain ⟨j, hj, hxe⟩ := List.mem_iff_getElem.mp hx
       have hjm : j < m := by simpa using hj
@@ -352,13 +353,14 @@ open Hex.Internal
 
 /-- Executable same-lattice certificate: two integer transforms that multiply
 the bases into each other. Each product equality is verified by the packed
-certificate `mulEqCert`, so neither product matrix is ever formed. -/
+certificate {name}`Hex.Internal.mulEqCert`, so neither product matrix is ever
+formed. -/
 @[expose]
 def sameLatticeCert (B B' : Matrix Int n m) (U V : Matrix Int n n) : Bool :=
   mulEqCert U B B' && mulEqCert V B' B
 
-/-- Soundness of `sameLatticeCert`: accepted certificates prove identical
-integer row lattices. -/
+/-- An accepted {name}`Hex.Matrix.sameLatticeCert` proves that the two bases
+generate identical integer row lattices. -/
 theorem sameLatticeCert_sound {B B' : Matrix Int n m} {U V : Matrix Int n n} :
     sameLatticeCert B B' U V = true →
       ∀ v, B.memLattice v ↔ B'.memLattice v := by
