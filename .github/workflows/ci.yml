@@ -38,12 +38,12 @@ jobs:
             >> "$GITHUB_ENV"
       - name: Build external-reduction check
         run: lake build hexlll_external_reduction
-      - name: External reduction (absent + LD_PRELOAD present)
+      - name: External reduction (absent + explicit load present)
         run: |
           .lake/build/bin/hexlll_external_reduction absent
           cc -shared -fPIC scripts/ci/hexlll_probe_provider.c -o .lake/build/hexlll_probe_provider.so
-          LD_PRELOAD="$PWD/.lake/build/hexlll_probe_provider.so" \
-            .lake/build/bin/hexlll_external_reduction present
+          .lake/build/bin/hexlll_external_reduction present \
+            "$PWD/.lake/build/hexlll_probe_provider.so"
       - name: Build conformance
         run: |
           cd conformance
@@ -99,9 +99,9 @@ jobs:
           build: false
       - name: Build external-reduction check
         run: lake build hexlll_external_reduction
-      - name: External reduction (absent + DYLD_INSERT present)
+      - name: External reduction (absent + explicit load present)
         run: |
           .lake/build/bin/hexlll_external_reduction absent
           cc -shared -fPIC scripts/ci/hexlll_probe_provider.c -o .lake/build/hexlll_probe_provider.dylib
-          DYLD_INSERT_LIBRARIES="$PWD/.lake/build/hexlll_probe_provider.dylib" \
-            .lake/build/bin/hexlll_external_reduction present
+          .lake/build/bin/hexlll_external_reduction present \
+            "$PWD/.lake/build/hexlll_probe_provider.dylib"
